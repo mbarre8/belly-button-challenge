@@ -39,7 +39,7 @@ let trace1 = {
 
 //Creating title and margin parameters
 let layout = {
-  title: "The Top 10 OTUs for ID 940",
+  title: "Top 10 OTUs",
   margin: {
     l: 100,
     r: 100,
@@ -83,7 +83,7 @@ let trace2 ={
 
 //Creating title, margin parameters, specify height and weight of graph
 let layout2 = {
-  title: "OTUs VS Sample Size for ID 940",
+  title: "OTUs VS Sample Size",
   margin: {
     l: 100,
     r: 100,
@@ -105,10 +105,19 @@ let metaData = data.metadata;
 // create a variable to pull first array in metadata list
 let metaDataArray = metaData.filter(item =>item.id);
 let firstMetaDataArray = metaDataArray[0];
-console.log("First Metadata Array:", firstMetaDataArray);
+console.log("First Metadata:", firstMetaDataArray);
 
 
-// d3.selectAll("#sample-metadata").append("h4").text(``);
+let demographicInfo= d3.selectAll("#sample-metadata");
+demographicInfo.html(" ");
+Object.entries(firstMetaDataArray).forEach(([k,v])=> {
+demographicInfo.append("div").text(`${k}:${v}`);
+});
+// append("div").text("Id: " +firstMetaDataArray.id);
+// let selector = d3.select("#sample-metadata");
+// for(let i=0; i< firstMetaDataArray.length;i++){
+//   selector.append("option").text(firstMetaDataArray[i]);};
+
 });
 
 

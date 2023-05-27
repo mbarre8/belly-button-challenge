@@ -2,17 +2,21 @@
 //get the sample json data from the URL
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
 
-
 // Use the D3 library to Fetch the JSON data and console log it
-let data = d3.json(url).then(function(data){
+d3.json(url).then(function (data){
   console.log("Data: ", data);
+})
 
-//create a variable from samples list and print results
+
+
+function Samples(sample){
+  d3.json(url).then((data)=>{
+  //create a variable from samples list and print results
 let samples = data.samples;
   console.log("Samples: ", samples);
 
 // create a variable to pull first array in samples list
-let samplesArray = samples.filter(item =>item.id);
+let samplesArray = samples.filter(item =>item.id == sample);
 let firstSamplesArray = samplesArray[0];
 console.log("First Array:", firstSamplesArray);
 
@@ -39,7 +43,7 @@ let trace1 = {
 
 //Creating title and margin parameters
 let layout = {
-  title: "Top 10 OTUs",
+  title: "Top 10 Operational Taxonomic Units (OTUs)",
   margin: {
     l: 100,
     r: 100,
@@ -89,39 +93,62 @@ let layout2 = {
     r: 100,
     t: 100,
     b: 100},
-    height: 700,
-    width: 1500};
+    height: 600,
+    width: 1400};
 
 // assigning graph details to a variable
 let data2= [trace2];
 
 //plot bubble graph
 Plotly.newPlot('bubble', data2, layout2);
+});
+}
+
+
+function MetaData(sample) {
+  d3.json(url).then((data)=>{
 
 //create a variable from metadata list and print results
 let metaData = data.metadata;
   console.log("Metadata: ", metaData);
 
 // create a variable to pull first array in metadata list
-let metaDataArray = metaData.filter(item =>item.id);
+let metaDataArray = metaData.filter(item =>item.id == sample);
 let firstMetaDataArray = metaDataArray[0];
 console.log("First Metadata:", firstMetaDataArray);
 
-
+//Select the sample-metadata ID and append the first object with forEach function to get all key-value pairs from first metadata array entry
 let demographicInfo= d3.selectAll("#sample-metadata");
 demographicInfo.html(" ");
 Object.entries(firstMetaDataArray).forEach(([k,v])=> {
 demographicInfo.append("div").text(`${k}:${v}`);
 });
-// append("div").text("Id: " +firstMetaDataArray.id);
-// let selector = d3.select("#sample-metadata");
-// for(let i=0; i< firstMetaDataArray.length;i++){
-//   selector.append("option").text(firstMetaDataArray[i]);};
+
+  });
+}
+function init() {
+  // Use D3 to select the dropdown menu
+  let dropdownMenu = d3.select("#selDataset");
+  
+  //
+  d3.json(url).then((data) => {
+    let sampleNames= data.names;
+    sampleNames.forEach((sample)=> {
+    dropdownMenu.append("option").text(`${sample}`).property("value", sample);
+    }); 
+  
+  const sampleOne = sampleNames[0];
+  Samples(sampleOne);
+  MetaData(sampleOne);
+  console.log("Sample one:", sampleOne);
 
 });
+}
 
 
+function optionChanged(newSample){
+  Samples(newSample);
+  MetaData(newSample);
+  }
 
-
-
-
+  init();

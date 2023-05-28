@@ -7,11 +7,10 @@ d3.json(url).then(function (data){
   console.log("Data: ", data);
 })
 
-
-
 function Samples(sample){
   d3.json(url).then((data)=>{
-  //create a variable from samples list and print results
+
+//create a variable from samples list and print results
 let samples = data.samples;
   console.log("Samples: ", samples);
 
@@ -43,7 +42,7 @@ let trace1 = {
 
 //Creating title and margin parameters
 let layout = {
-  title: "Top 10 Operational Taxonomic Units (OTUs)",
+  title: "<b>Top 10 Operational Taxonomic Units (OTUs)<b>",
   margin: {
     l: 100,
     r: 100,
@@ -87,7 +86,7 @@ let trace2 ={
 
 //Creating title, margin parameters, specify height and weight of graph
 let layout2 = {
-  title: "OTUs VS Sample Size",
+  title: "<b>OTUs Sample Size<b>",
   margin: {
     l: 100,
     r: 100,
@@ -104,7 +103,6 @@ Plotly.newPlot('bubble', data2, layout2);
 });
 }
 
-
 function MetaData(sample) {
   d3.json(url).then((data)=>{
 
@@ -116,6 +114,7 @@ let metaData = data.metadata;
 let metaDataArray = metaData.filter(item =>item.id == sample);
 let firstMetaDataArray = metaDataArray[0];
 console.log("First Metadata:", firstMetaDataArray);
+// console.log(metaDataArray);
 
 //Select the sample-metadata ID and append the first object with forEach function to get all key-value pairs from first metadata array entry
 let demographicInfo= d3.selectAll("#sample-metadata");
@@ -123,32 +122,94 @@ demographicInfo.html(" ");
 Object.entries(firstMetaDataArray).forEach(([k,v])=> {
 demographicInfo.append("div").text(`${k}:${v}`);
 });
+  });
+}
+
+function GaugeData(sample) {
+  d3.json(url).then((data)=>{
+
+//create a variable from metadata list and print results
+let metaData = data.metadata;
+  console.log("Metadata: ", metaData);
+
+// create a variable to pull first array in metadata list
+let metaDataArray = metaData.filter(item =>item.id == sample);
+
+let gauge1 = d3.select("#gauge");
+gauge1.html(" ");
+let washFreq = metaDataArray.map(item =>item.wfreq);
+let firstWashFreq = washFreq[0];
+console.log("Wash Frequency for first ID: ", firstWashFreq);
+
+let trace3 = [
+	{
+		domain: { x: [0, 1], y: [0, 1] },
+		value: firstWashFreq,
+		title: { text: "<b>Belly Button Washing Frequency <b><br> Scrubs Per Week" },
+    type: "indicator",
+		mode: "gauge+number",
+    gauge: {
+      axis:{range: [null, 9] },
+      steps: [
+      { range: [0, 1], color: "ivory" },
+      { range: [1, 2] , color: "beige"},
+      { range: [2, 3], color: "lightyellow" },
+      { range: [3, 4], color: "yellow" },
+      { range: [4, 5], color: "yellowgreen" },
+      { range: [5, 6], color: "olive" },
+      { range: [6, 7], color: "lightgreen" },
+      { range: [7, 8], color: "green" },
+      { range: [8, 9], color: "darkgreen" },
+      ],
+     
+
+	}}
+];
+
+let data3 = [trace3];
+
+let layout3 = { 
+  width: 600,
+  height: 500, 
+  margin: { t: 0, b: 0 }
+  };
+
+Plotly.newPlot('gauge', trace3, layout3);
 
   });
 }
+
 function init() {
+  
   // Use D3 to select the dropdown menu
   let dropdownMenu = d3.select("#selDataset");
   
-  //
+  //create a variable from names list and print results
   d3.json(url).then((data) => {
     let sampleNames= data.names;
-    sampleNames.forEach((sample)=> {
-    dropdownMenu.append("option").text(`${sample}`).property("value", sample);
+    console.log("Names: ", sampleNames);
+
+  //ForEach Id name in variable sampleNames append results to drop down menu 
+    sampleNames.forEach((sampleName)=> {
+    dropdownMenu.append("option").text(`${sampleName}`).property("value", sampleName);
     }); 
   
+   // Initializes the page with a default ID with default bar, bubble graph and demographic info
   const sampleOne = sampleNames[0];
   Samples(sampleOne);
   MetaData(sampleOne);
+  GaugeData(sampleOne);
   console.log("Sample one:", sampleOne);
 
 });
 }
 
-
 function optionChanged(newSample){
   Samples(newSample);
   MetaData(newSample);
+  GaugeData(newSample);
   }
+
+
 
   init();

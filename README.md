@@ -21,3 +21,5 @@ Forthly, I created a dropdown menu with all Ids available for selection. Once an
 Lastly, I created a gauge chart display an individual's belly button wash frequency and chart changes based on Id selected. Here's an image for ID: 940.
  
  ![](images/gauge.png)
+ 
+ During the completion of this challenge I used plotly and javascript reference docs, stack overflow and W3school to assist in developing the dashboard. In addition I referencede class activities. 

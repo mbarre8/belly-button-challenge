@@ -1,6 +1,6 @@
 
 //get the sample json data from the URL
-const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
+const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
 // Use the D3 library to Fetch the JSON data and console log it
 d3.json(url).then(function (data){
@@ -17,7 +17,7 @@ let samples = data.samples;
 // create a variable to pull first array in samples list
 let samplesArray = samples.filter(item =>item.id == sample);
 let firstSamplesArray = samplesArray[0];
-console.log("First Array:", firstSamplesArray);
+console.log("Current Selected Array:", firstSamplesArray);
 
 //Create variable displaying the top 10 OTU_Ids 
 let TopOtuIds = firstSamplesArray.otu_ids.slice(0,10).map(item=> `OTU ${item}`).reverse();
@@ -42,7 +42,7 @@ let trace1 = {
 
 //Creating title and margin parameters
 let layout = {
-  title: "<b>Top 10 Operational Taxonomic Units (OTUs)<b>",
+  title: "<b>Top 10 Operational Taxonomic Units<b>",
   margin: {
     l: 100,
     r: 100,
@@ -113,7 +113,7 @@ let metaData = data.metadata;
 // create a variable to pull first array in metadata list
 let metaDataArray = metaData.filter(item =>item.id == sample);
 let firstMetaDataArray = metaDataArray[0];
-console.log("First Metadata:", firstMetaDataArray);
+console.log("Current Metadata:", firstMetaDataArray);
 // console.log(metaDataArray);
 
 //Select the sample-metadata ID and append the first object with forEach function to get all key-value pairs from first metadata array entry
@@ -122,25 +122,14 @@ demographicInfo.html(" ");
 Object.entries(firstMetaDataArray).forEach(([k,v])=> {
 demographicInfo.append("div").text(`${k}:${v}`);
 });
-  });
-}
 
-function GaugeData(sample) {
-  d3.json(url).then((data)=>{
 
-//create a variable from metadata list and print results
-let metaData = data.metadata;
-  console.log("Metadata: ", metaData);
-
-// create a variable to pull first array in metadata list
-let metaDataArray = metaData.filter(item =>item.id == sample);
-
-let gauge1 = d3.select("#gauge");
-gauge1.html(" ");
+//setting variables to locate wash frequency in each metadata array
 let washFreq = metaDataArray.map(item =>item.wfreq);
 let firstWashFreq = washFreq[0];
-console.log("Wash Frequency for first ID: ", firstWashFreq);
+console.log("Wash Frequency for current ID: ", firstWashFreq);
 
+//determine criteria for the graph
 let trace3 = [
 	{
 		domain: { x: [0, 1], y: [0, 1] },
@@ -152,8 +141,8 @@ let trace3 = [
       axis:{range: [null, 9] },
       steps: [
       { range: [0, 1], color: "ivory" },
-      { range: [1, 2] , color: "beige"},
-      { range: [2, 3], color: "lightyellow" },
+      { range: [1, 2] , color: "lightyellow"},
+      { range: [2, 3], color:  "beige"},
       { range: [3, 4], color: "yellow" },
       { range: [4, 5], color: "yellowgreen" },
       { range: [5, 6], color: "olive" },
@@ -162,20 +151,20 @@ let trace3 = [
       { range: [8, 9], color: "darkgreen" },
       ],
      
+     
 
 	}}
 ];
 
-let data3 = [trace3];
-
+// specifying size and margins of chart
 let layout3 = { 
   width: 600,
   height: 500, 
   margin: { t: 0, b: 0 }
   };
 
+//plot gauge chart
 Plotly.newPlot('gauge', trace3, layout3);
-
   });
 }
 
@@ -194,20 +183,19 @@ function init() {
     dropdownMenu.append("option").text(`${sampleName}`).property("value", sampleName);
     }); 
   
-   // Initializes the page with a default ID with default bar, bubble graph and demographic info
+   // Initializes the page with a default ID with default bar, bubble graph, gauge chart and demographic info
   const sampleOne = sampleNames[0];
   Samples(sampleOne);
   MetaData(sampleOne);
-  GaugeData(sampleOne);
   console.log("Sample one:", sampleOne);
 
 });
 }
 
+//create function to change between change all inputs with corresponding ID selected
 function optionChanged(newSample){
   Samples(newSample);
   MetaData(newSample);
-  GaugeData(newSample);
   }
 
 
